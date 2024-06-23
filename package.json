@@ -1,6 +1,6 @@
 {
-  "name": "@txsync/tsuko",
-  "version": "0.0.3",
+  "name": "txsync-sdk",
+  "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "description": "A Web3 library for interacting with the txSync Paymaster as a Service.",
@@ -34,12 +34,13 @@
     "src/"
   ],
   "dependencies": {
-    "zksync-ethers": "^6.7.0"
+    "zksync-ethers": "^6.8.0"
   },
   "devDependencies": {
-    "@matterlabs/hardhat-zksync": "^1.0.0",
+    "@matterlabs/hardhat-zksync": "^1.1.0",
     "@typechain/ethers-v6": "^0.5.0",
     "@types/chai": "^4.3.9",
+    "@types/debug": "^4.1.12",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.2",
     "c8": "^8.0.1",
@@ -57,6 +58,7 @@
     "typescript": "^5.1.6"
   },
   "scripts": {
+    "test:build": "rm -rf tests/build && rm -rf tests/txsync/.upgradable && tsc -p tsconfig.test.json",
     "test:coverage": "c8 -c .nycrc mocha -r ts-node/register tests/**/*.test.ts",
     "test": "mocha -r ts-node/register --timeout 5000000 tests/**/*.test.ts",
     "build": "tsc",

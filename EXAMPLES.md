@@ -24,7 +24,7 @@ Note that these examples assume familiarity with the zkSync network, Ethereum de
 Before you can start using the `Tsuko` class, you need to obtain a signer instance. In the context of a web application, you can use the `BrowserProvider` from the `zksync-ethers` library to get a signer from the user's Web3 provider (e.g., MetaMask). Also, please include imports for tsuko abstractions, like showed in the following code.
 
 ```javascript
-import { getTsuko, createRestriction, types, typechain } from "@txsync/tsuko";
+import { getTsuko, createRestriction, types, typechain } from "txsync-sdk";
 import { BrowserProvider } from "zksync-ethers";
 
 const signer = await new BrowserProvider(window.ethereum!).getSigner();

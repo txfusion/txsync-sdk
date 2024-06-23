@@ -1,4 +1,4 @@
-# @txsync/tsuko
+# @txsync-sdk
 
 MISSING INTRO
 
