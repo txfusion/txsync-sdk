@@ -1,6 +1,19 @@
-# @txsync-sdk
+# 🚀 txsync-sdk
 
-MISSING INTRO
+## 📌 Overview
+
+`txsync-sdk` abstracts the functionalities of the [txSync](https://txsync.io/) products and makes it easier to integrate in your project. 
+
+We currently support [txTsuko](https://app.txsync.io/tsuko), but we're planning to integrate all txSync functionalities.
+Currently, we have two main exported functions:
+
+-   `getTsuko` - which provides a way to get the Tsuko you created and then call methods on it
+-   `createRestriction` - which deploys a new restriction contract based on the provided parameters
+
+## 🛠 Prerequisites
+
+-   `node: >= 18` ([installation guide](https://nodejs.org/en/download/package-manager))
+-   `ethers: ^6.8.0`
 
 
 ## getTsuko
