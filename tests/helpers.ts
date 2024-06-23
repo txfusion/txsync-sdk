@@ -1,7 +1,6 @@
 import {TASK_COMPILE} from 'hardhat/builtin-tasks/task-names';
 import {resetHardhatContext} from 'hardhat/plugins-testing';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import '@matterlabs/hardhat-zksync-deploy/dist/type-extensions';
 import '@matterlabs/hardhat-zksync-upgradable/dist/src/type-extensions';
 import path from 'path';
 
