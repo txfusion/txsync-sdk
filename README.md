@@ -2,25 +2,25 @@
 
 ## 📌 Overview
 
-`txsync-sdk` abstracts the functionalities of the [txSync](https://txsync.io/) products and makes it easier to integrate in your project. 
+`txsync-sdk` abstracts the functionalities of the [txSync](https://txsync.io/) products and makes it easier to integrate in your project.
 
 We currently support [txTsuko](https://app.txsync.io/tsuko), but we're planning to integrate all txSync functionalities.
 Currently, we have two main exported functions:
 
--   `getTsuko` - which provides a way to get the Tsuko you created and then call methods on it
--   `createRestriction` - which deploys a new restriction contract based on the provided parameters
+- `getTsuko` - which provides a way to get the Tsuko you created and then call methods on it
+- `createRestriction` - which deploys a new restriction contract based on the provided parameters
 
 ## 🛠 Prerequisites
 
--   `node: >= 18` ([installation guide](https://nodejs.org/en/download/package-manager))
--   `ethers: ^6.8.0`
-
+- `node: >= 18` ([installation guide](https://nodejs.org/en/download/package-manager))
+- `ethers: ^6.8.0`
 
 ## getTsuko
 
 ```javascript
 async function getTsuko(address: Address, runner: Signer | Wallet): Promise<Tsuko>
 ```
+
 Creates a new instance of the Tsuko class based on the provided Paymaster contract address.
 
 - `address`: Address: The address of the Paymaster contract.
@@ -39,7 +39,7 @@ constructor(address: Address, runner: Signer | Wallet, paymasterType: PaymasterT
 
 - `address`: `Address` - The address of the Paymaster contract.
 - `runner`: `Signer` | `Wallet` - A `Signer` or `Wallet` instance for signing transactions.
-- `paymasterType`: [`PaymasterType`](#paymastertype) - type of Paymaster (ERC20Paymaster or SponsoredPaymaster). 
+- `paymasterType`: [`PaymasterType`](#paymastertype) - type of Paymaster (ERC20Paymaster or SponsoredPaymaster).
 - `chainId`: `string` - The ID of the chain the Paymaster contract is deployed on.
 - `token`: `Address` (optional) - The address of the ERC20 token used by the ERC20Paymaster.
 
@@ -53,7 +53,7 @@ Populates a `TransactionRequest` object with the necessary data to call a functi
 
 - `contractAddress`: `Address` - The address of the contract to call.
 - `functionToCall`: `ethers.InterfaceAbi` - The definition of the function to call. Can be:
-  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, ``function balanceOf(address) view returns (uint)``.
+  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
 - `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
@@ -80,7 +80,7 @@ Populates and sends a transaction using the Paymaster.
 
 - `contractAddress`: `Address` - The address of the contract to call.
 - `functionToCall`: `ethers.InterfaceAbi` - The definition of the function to call. Can be:
-  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, ``function balanceOf(address) view returns (uint)``.
+  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
 - `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
@@ -170,7 +170,7 @@ Checks if a transaction is eligible to be paid for by the Paymaster, based on th
 
 - `contractAddress`: `Address` - The address of the contract to call.
 - `functionToCall`: `ethers.InterfaceAbi` - The definition of the function to call. Can be:
-  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, ``function balanceOf(address) view returns (uint)``.
+  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
 - `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
@@ -186,7 +186,7 @@ Calculates the minimal allowance required for an ERC20Paymaster to pay for a tra
 
 - `contractAddress`: `Address` - The address of the contract to call.
 - `functionToCall`: `ethers.InterfaceAbi` - The definition of the function to call. Can be:
-  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, ``function balanceOf(address) view returns (uint)``.
+  - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
 - `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
