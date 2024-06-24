@@ -12,7 +12,7 @@ import {
   isBaseRestrictionItem,
   sendRequest,
 } from './utils';
-import {TsukoError} from './errors';
+import {PaymasterError} from './errors';
 import {Signer, Wallet} from 'zksync-ethers';
 import { Address } from 'zksync-ethers/build/types';
 
@@ -28,7 +28,7 @@ export async function createRestriction(
     restrictionFactoryContractAddress ??
     RESTRICTION_FACTORY_CONTRACT_ADDRESS(chainId);
   if (!factoryAddress)
-    throw new TsukoError(
+    throw new PaymasterError(
       'Restriction factory contract address not found',
       'FACTORY_NOT_FOUND'
     );
@@ -53,7 +53,7 @@ async function createAppropriateRestriction(
     case RestrictionMethod.FUNCTION:
       return handleFunctionRestriction(Factory, name, items as FunctionItems);
     default:
-      throw new TsukoError('Invalid restriction type provided', 'INVALID_TYPE');
+      throw new PaymasterError('Invalid restriction type provided', 'INVALID_TYPE');
   }
 }
 
@@ -120,7 +120,7 @@ function parseRestrictionCreationResult(
     log => log.topics[0] === id('RestrictionCreated(address)')
   );
   if (!log)
-    throw new TsukoError(
+    throw new PaymasterError(
       'No RestrictionCreated event found',
       'RESTRICTION_NOT_FOUND'
     );

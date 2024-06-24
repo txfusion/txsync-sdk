@@ -7,7 +7,7 @@
 We currently support [txTsuko](https://app.txsync.io/tsuko), but we're planning to integrate all txSync functionalities.
 Currently, we have two main exported functions:
 
-- `getTsuko` - which provides a way to get the Tsuko you created and then call methods on it
+- `getPaymaster` - which provides a way to get the Paymaster you created and then call methods on it
 - `createRestriction` - which deploys a new restriction contract based on the provided parameters
 
 ## 🛠 Prerequisites
@@ -15,21 +15,21 @@ Currently, we have two main exported functions:
 - `node: >= 18` ([installation guide](https://nodejs.org/en/download/package-manager))
 - `ethers: ^6.8.0`
 
-## getTsuko
+## getPaymaster
 
 ```javascript
-async function getTsuko(address: Address, runner: Signer | Wallet): Promise<Tsuko>
+async function getPaymaster(address: Address, runner: Signer | Wallet): Promise<Paymaster>
 ```
 
-Creates a new instance of the Tsuko class based on the provided Paymaster contract address.
+Creates a new instance of the Paymaster class based on the provided Paymaster contract address.
 
 - `address`: Address: The address of the Paymaster contract.
 - `runner`: `Signer` | `Wallet`: A `Signer` or `Wallet` instance for signing and sending transactions.
-- `Returns`: A new `Tsuko` instance.
+- `Returns`: A new `Paymaster` instance.
 
-## Tsuko
+## Paymaster
 
-The `Tsuko` class is a utility class that provides methods for interacting with tsuko contracts on the zkSync network. It supports two types of Paymasters: ERC20Paymaster and SponsoredPaymaster.
+The `Paymaster` class is a utility class that provides methods for interacting with Paymaster contracts on the zkSync network. It supports two types of Paymasters: ERC20Paymaster and SponsoredPaymaster.
 
 ### Constructor
 
@@ -43,10 +43,10 @@ constructor(address: Address, runner: Signer | Wallet, paymasterType: PaymasterT
 - `chainId`: `string` - The ID of the chain the Paymaster contract is deployed on.
 - `token`: `Address` (optional) - The address of the ERC20 token used by the ERC20Paymaster.
 
-### populateTsukoTransaction
+### populatePaymasterTransaction
 
 ```javascript
-async populateTsukoTransaction(contractAddress: Address, functionToCall: InterfaceAbi, args?: any[], overrides?: TsukoOverrides): Promise<TransactionRequest>
+async populatePaymasterTransaction(contractAddress: Address, functionToCall: InterfaceAbi, args?: any[], overrides?: PaymasterOverrides): Promise<TransactionRequest>
 ```
 
 Populates a `TransactionRequest` object with the necessary data to call a function on a contract using the Paymaster.
@@ -56,7 +56,7 @@ Populates a `TransactionRequest` object with the necessary data to call a functi
   - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
-- `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
+- `overrides`: [`PaymasterOverrides`](#paymasteroverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
 - `Returns`: A `TransactionRequest` object populated with the transaction data.
 
 ### getPaymasterCustomData
@@ -70,10 +70,10 @@ Generates the `PaymasterParams` object that will be passed to the transaction th
 - `paymasterOptions`: [`PaymasterOptions`](#paymasteroptions) (optional) - An object containing options for the Paymaster (e.g., innerInput, minimalAllowance).
 - `Returns`: A `PaymasterParams` object.
 
-### sendTsukoTransaction
+### sendPaymasterTransaction
 
 ```javascript
-async sendTsukoTransaction(contractAddress: Address, functionToCall: InterfaceAbi, args: any[] = [], overrides?: TsukoOverrides): Promise<TransactionResponse>
+async sendPaymasterTransaction(contractAddress: Address, functionToCall: InterfaceAbi, args: any[] = [], overrides?: PaymasterOverrides): Promise<TransactionResponse>
 ```
 
 Populates and sends a transaction using the Paymaster.
@@ -83,7 +83,7 @@ Populates and sends a transaction using the Paymaster.
   - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
-- `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
+- `overrides`: [`PaymasterOverrides`](#paymasteroverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
 - `Returns`: A `TransactionResponse` object.
 
 ### sendTransaction
@@ -113,7 +113,7 @@ Gets the balance of the Paymaster contract.
 async estimateGas(tx: TransactionRequest): Promise<BigNumberish>
 ```
 
-Estimates the gas required for a transaction. Especially tailored for tsuko paymaster needs.
+Estimates the gas required for a transaction. Especially tailored for Paymaster paymaster needs.
 
 - `tx`: The `TransactionRequest` object for which to estimate the gas.
 - `Returns`: The estimated gas limit as a `BigNumberish` value.
@@ -163,7 +163,7 @@ Removes a restriction contract from the Paymaster.
 ### checkTransactionEligibility
 
 ```javascript
-async checkTransactionEligibility(contractAddress: Address, functionToCall: InterfaceAbi, args: any[] = [], overrides?: TsukoOverrides): Promise<boolean>
+async checkTransactionEligibility(contractAddress: Address, functionToCall: InterfaceAbi, args: any[] = [], overrides?: PaymasterOverrides): Promise<boolean>
 ```
 
 Checks if a transaction is eligible to be paid for by the Paymaster, based on the added restrictions.
@@ -173,13 +173,13 @@ Checks if a transaction is eligible to be paid for by the Paymaster, based on th
   - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
-- `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
+- `overrides`: [`PaymasterOverrides`](#paymasteroverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
 - `Returns`: `true` if the transaction is eligible, `false` otherwise.
 
 ### getMinimalAllowance
 
 ```javascript
-async getMinimalAllowance(contractAddress: Address, functionToCall: InterfaceAbi, args?: any[], overrides?: TsukoOverrides): Promise<BigNumberish>
+async getMinimalAllowance(contractAddress: Address, functionToCall: InterfaceAbi, args?: any[], overrides?: PaymasterOverrides): Promise<BigNumberish>
 ```
 
 Calculates the minimal allowance required for an ERC20Paymaster to pay for a transaction.
@@ -189,7 +189,7 @@ Calculates the minimal allowance required for an ERC20Paymaster to pay for a tra
   - Human-Readable fragment - string which resembles a Solidity signature and is introduced in [this blog entry](https://blog.ricmoo.com/human-readable-contract-abis-in-ethers-js-141902f4d917). For example, `function balanceOf(address) view returns (uint)`.
   - Parsed JSON fragment - [[Fragment]] instances - JavaScript Object desribed in the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/abi-spec.html#json).
 - `args`: `any[]` (optional) - An array of arguments for the function call.
-- `overrides`: [`TsukoOverrides`](#tsukooverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
+- `overrides`: [`PaymasterOverrides`](#paymasteroverrides) (optional)- An object containing overrides for the transaction (e.g., to, value, data, customData, gasLimit, maxFeePerGas, maxPriorityFeePerGas)
 - `Returns`: The minimal allowance as a `BigNumberish` value.
 
 ## Restrictions
@@ -219,12 +219,12 @@ Deploys a new restriction contract based on the provided parameters.
 
 ## types
 
-#### TsukoParams
+#### PaymasterParams
 
-A tuple type representing the parameters for several methods of Tsuko instance: [populateTsukoTransaction](#populatetsukotransaction), [sendTsukoTransaction](#sendtsukotransaction), [checkTransactionEligibility](#checkTransactionEligibility) and [getMinimalAllowance](#getminimalallowance). Added for easier usage.
+A tuple type representing the parameters for several methods of Paymaster instance: [populatePaymasterTransaction](#populatePaymasterTransaction), [sendPaymasterTransaction](#sendPaymasterTransaction), [checkTransactionEligibility](#checkTransactionEligibility) and [getMinimalAllowance](#getminimalallowance). Added for easier usage.
 
 ```javascript
-export type TsukoParams = [Address, InterfaceAbi, any[]?, TsukoOverrides?];
+export type PaymasterParams = [Address, InterfaceAbi, any[]?, PaymasterOverrides?];
 ```
 
 #### PaymasterType
@@ -255,10 +255,10 @@ export interface PaymasterOptions {
 }
 ```
 
-#### TsukoOverrides
+#### PaymasterOverrides
 
 ```javascript
-export interface TsukoOverrides extends Omit<TransactionRequest, 'from' | 'type' | 'gasPrice'> {
+export interface PaymasterOverrides extends Omit<TransactionRequest, 'from' | 'type' | 'gasPrice'> {
   paymasterOptions?: PaymasterOptions;
 }
 ```

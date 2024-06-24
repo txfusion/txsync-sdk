@@ -1,5 +1,5 @@
 export * as typechain from './typechain';
 export * as types from './types';
 
-export {getTsuko} from './tsuko';
+export {getPaymaster} from './paymaster';
 export {createRestriction} from './restriction';

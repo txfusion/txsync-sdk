@@ -16,7 +16,7 @@ export function useEnvironmentWithLocalSetup(
 ) {
   const fixtureProjectDir = path.resolve(__dirname, fixtureProjectName);
 
-  before('Run tsuko`s tests', async function () {
+  before('Run paymaster`s tests', async function () {
     process.chdir(fixtureProjectDir);
     process.env.HARDHAT_NETWORK = networkName;
 
