@@ -25,6 +25,9 @@
     "ethereum",
     "layer2"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.9.0"
   },
