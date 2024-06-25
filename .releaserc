@@ -1,11 +1,14 @@
 {
-  "repositoryUrl": "https://github.com/zksync-sdk/zksync-ethers.git",
+  "repositoryUrl": "https://github.com/txfusion/txsync-sdk.git",
   "branches": "main",
   "debug": true,
   "addReleases": "top",
   "preset": "angular",
   "releaseRules": [
-    {"breaking": true, "release": "minor"}
+    {
+      "breaking": true,
+      "release": "minor"
+    }
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
@@ -25,7 +28,10 @@
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "package.json"],
+        "assets": [
+          "CHANGELOG.md",
+          "package.json"
+        ],
         "message": "${nextRelease.version} version bump [skip ci]\n\n${nextRelease.notes}"
       }
     ],
