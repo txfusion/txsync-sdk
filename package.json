@@ -1,5 +1,5 @@
 {
-  "name": "txsync-sdk",
+  "name": "@txfusion/txsync-sdk",
   "version": "0.0.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
