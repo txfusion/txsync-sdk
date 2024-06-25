@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {Wallet, Contract} from 'zksync-ethers';
-import {getTsuko} from '../src/tsuko';
+import {getPaymaster} from '../src/paymaster';
 import {createRestriction} from '../src/restriction';
-import {PaymasterType, RestrictionMethod, TsukoParams} from '../src/types';
+import {PaymasterType, RestrictionMethod, PaymasterParams} from '../src/types';
 import {
   ContractRestriction__factory,
   UserRestriction__factory,
@@ -11,7 +11,7 @@ import {useEnvironmentWithLocalSetup} from './helpers';
 import {HDNodeWallet, id, parseEther} from 'ethers';
 import {EIP712_TX_TYPE} from 'zksync-ethers/build/utils';
 
-describe('Test tsuko and restrictions', async () => {
+describe('Test paymaster and restrictions', async () => {
   useEnvironmentWithLocalSetup('txsync');
 
   let wallet: Wallet;
@@ -136,55 +136,60 @@ describe('Test tsuko and restrictions', async () => {
     ).wait();
   });
 
-  describe('Tsuko Tests', () => {
-    it('getTsuko - Sponsored', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
+  describe('Paymaster Tests', () => {
+    it('getPaymaster - Sponsored', async () => {
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
 
-      expect(tsuko).to.not.be.undefined;
-      expect(tsuko.address).to.be.equal(sponsoredPaymasterAddress);
-      expect(tsuko.runner).to.be.equal(wallet);
-      expect(tsuko.paymasterType).to.be.equal(PaymasterType.SPONSORED);
-      expect(tsuko.token).to.be.undefined;
+      expect(paymaster).to.not.be.undefined;
+      expect(paymaster.address).to.be.equal(sponsoredPaymasterAddress);
+      expect(paymaster.runner).to.be.equal(wallet);
+      expect(paymaster.paymasterType).to.be.equal(PaymasterType.SPONSORED);
+      expect(paymaster.token).to.be.undefined;
     });
 
-    it('getTsuko - ERC20', async () => {
-      const tsuko = await getTsuko(erc20PaymasterAddress, wallet);
+    it('getPaymaster - ERC20', async () => {
+      const paymaster = await getPaymaster(erc20PaymasterAddress, wallet);
 
-      expect(tsuko).to.not.be.undefined;
-      expect(tsuko.address).to.be.equal(erc20PaymasterAddress);
-      expect(tsuko.runner).to.be.equal(wallet);
-      expect(tsuko.paymasterType).to.be.equal(PaymasterType.ERC20);
-      expect(tsuko.token).to.not.be.undefined;
+      expect(paymaster).to.not.be.undefined;
+      expect(paymaster.address).to.be.equal(erc20PaymasterAddress);
+      expect(paymaster.runner).to.be.equal(wallet);
+      expect(paymaster.paymasterType).to.be.equal(PaymasterType.ERC20);
+      expect(paymaster.token).to.not.be.undefined;
     });
 
-    it('populateTsukoTransaction', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
-      const tsukoTx = await tsuko.populateTsukoTransaction(
+    it('populatePaymasterTransaction', async () => {
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
+      const paymasterTx = await paymaster.populatePaymasterTransaction(
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         ['Hello World!']
       );
-      expect(tsukoTx).to.not.be.undefined;
-      expect(tsukoTx.type).to.be.equal(EIP712_TX_TYPE);
-      expect(tsukoTx.to).to.be.equal(await greeterContract.getAddress());
-      expect(tsukoTx.from).to.be.equal(await wallet.getAddress());
-      expect(tsukoTx.data).to.be.equal(
+      expect(paymasterTx).to.not.be.undefined;
+      expect(paymasterTx.type).to.be.equal(EIP712_TX_TYPE);
+      expect(paymasterTx.to).to.be.equal(await greeterContract.getAddress());
+      expect(paymasterTx.from).to.be.equal(await wallet.getAddress());
+      expect(paymasterTx.data).to.be.equal(
         '0xa41368620000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000c48656c6c6f20576f726c64210000000000000000000000000000000000000000'
       );
-      expect(tsukoTx.customData).to.not.be.undefined;
-      expect(tsukoTx.customData!.paymasterParams).to.not.be.undefined;
-      expect(tsukoTx.customData!.paymasterParams!.paymaster).to.be.equal(
+      expect(paymasterTx.customData).to.not.be.undefined;
+      expect(paymasterTx.customData!.paymasterParams).to.not.be.undefined;
+      expect(paymasterTx.customData!.paymasterParams!.paymaster).to.be.equal(
         sponsoredPaymasterAddress
       );
-      expect(tsukoTx.customData!.paymasterParams!.paymasterInput).to.be.equal(
+      expect(
+        paymasterTx.customData!.paymasterParams!.paymasterInput
+      ).to.be.equal(
         '0x8c5a344500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000'
       );
     });
 
     it('getPaymasterCustomData', async () => {
-      const tsukoSponsored = await getTsuko(sponsoredPaymasterAddress, wallet);
+      const paymasterSponsored = await getPaymaster(
+        sponsoredPaymasterAddress,
+        wallet
+      );
       const paymasterCustomDataSponsored =
-        tsukoSponsored.getPaymasterCustomData({minimalAllowance: 100n});
+        paymasterSponsored.getPaymasterCustomData({minimalAllowance: 100n});
 
       expect(paymasterCustomDataSponsored).to.not.be.undefined;
       expect(paymasterCustomDataSponsored.paymaster).to.be.equal(
@@ -194,8 +199,8 @@ describe('Test tsuko and restrictions', async () => {
         '0x8c5a344500000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000'
       );
 
-      const tsukoErc20 = await getTsuko(erc20PaymasterAddress, wallet);
-      const paymasterCustomDataErc20 = tsukoErc20.getPaymasterCustomData({
+      const paymasterErc20 = await getPaymaster(erc20PaymasterAddress, wallet);
+      const paymasterCustomDataErc20 = paymasterErc20.getPaymasterCustomData({
         minimalAllowance: 100n,
       });
 
@@ -207,48 +212,56 @@ describe('Test tsuko and restrictions', async () => {
       // expect(paymasterCustomDataErc20.paymasterInput).to.be.equal('0x949431dc000000000000000000000000361abb326562e6574a6323b44d5cbc0ce54a0853000000000000000000000000000000000000000000000000000000000000006400000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000');
     });
 
-    it('sendTsukoTransaction - Sponsored', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
-      const tsukoParams: TsukoParams = [
+    it('sendPaymasterTransaction - Sponsored', async () => {
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
+      const PaymasterParams: PaymasterParams = [
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         ['Hello from sponsored paymaster'],
       ];
 
-      await (await tsuko.sendTsukoTransaction(...tsukoParams)).wait();
+      await (
+        await paymaster.sendPaymasterTransaction(...PaymasterParams)
+      ).wait();
       expect(await greeterContract.greet()).to.be.equal(
         'Hello from sponsored paymaster'
       );
     });
 
     // TODO: Do more benchmarks and tests so we can set the OVERHEAD based on the chain id
-    it('sendTsukoTransaction - ERC20', async () => {
-      const tsuko = await getTsuko(erc20PaymasterAddress, wallet);
-      const tsukoParams: TsukoParams = [
+    it('sendPaymasterTransaction - ERC20', async () => {
+      const paymaster = await getPaymaster(erc20PaymasterAddress, wallet);
+      const PaymasterParams: PaymasterParams = [
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         ['Hello from erc20 paymaster'],
       ];
 
-      const allowance = await tsuko.getMinimalAllowance(...tsukoParams);
+      const allowance = await paymaster.getMinimalAllowance(...PaymasterParams);
       await (
         await erc20Contract.approve(erc20PaymasterAddress, allowance)
       ).wait();
 
-      await (await tsuko.sendTsukoTransaction(...tsukoParams)).wait();
+      await (
+        await paymaster.sendPaymasterTransaction(...PaymasterParams)
+      ).wait();
       expect(await greeterContract.greet()).to.be.equal(
         'Hello from erc20 paymaster'
       );
     });
 
     it('getPaymasterContract', async () => {
-      const tsukoSponsored = await getTsuko(sponsoredPaymasterAddress, wallet);
-      const paymasterSponsored = tsukoSponsored.getPaymasterContract();
+      const paymasterSponsored = await getPaymaster(
+        sponsoredPaymasterAddress,
+        wallet
+      );
+      const paymasterSponsoredContract =
+        paymasterSponsored.getPaymasterContract();
 
-      expect(paymasterSponsored).to.not.be.undefined;
-      expect(paymasterSponsored).to.be.instanceOf(Contract);
+      expect(paymasterSponsoredContract).to.not.be.undefined;
+      expect(paymasterSponsoredContract).to.be.instanceOf(Contract);
 
-      const erc20Contract = await getTsuko(erc20PaymasterAddress, wallet);
+      const erc20Contract = await getPaymaster(erc20PaymasterAddress, wallet);
       const paymasterERC20 = erc20Contract.getPaymasterContract();
 
       expect(paymasterERC20).to.not.be.undefined;
@@ -256,15 +269,17 @@ describe('Test tsuko and restrictions', async () => {
     });
 
     it('estimateGas', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
-      const tsukoParams: TsukoParams = [
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
+      const PaymasterParams: PaymasterParams = [
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         ['Hello from sponsored paymaster'],
       ];
 
-      const tx = await tsuko.populateTsukoTransaction(...tsukoParams);
-      const gasLimit = await tsuko.estimateGas(tx);
+      const tx = await paymaster.populatePaymasterTransaction(
+        ...PaymasterParams
+      );
+      const gasLimit = await paymaster.estimateGas(tx);
 
       // TODO: Add Checks
     });
@@ -372,14 +387,14 @@ describe('Test tsuko and restrictions', async () => {
           await restrictionFactoryContract.getAddress()
         );
       } catch (error: any) {
-        expect(error.name).to.be.equal('TsukoError');
+        expect(error.name).to.be.equal('PaymasterError');
         expect(error.errorCode).to.be.equal('INVALID_TYPE');
         expect(error.message).to.be.equal('Invalid restriction type provided');
       }
     });
   });
 
-  describe('Restriction and Tsuko tests combined', () => {
+  describe('Restriction and TsukPaymastero tests combined', () => {
     beforeEach(async () => {
       const creationETH =
         await paymasterFactoryContract.calculatePaymasterCreationRequiredETH();
@@ -398,7 +413,7 @@ describe('Test tsuko and restrictions', async () => {
     });
 
     it('addRestriction', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
       const restrictionAddress = await createRestriction(
         'UserRestriction',
         RestrictionMethod.USER,
@@ -407,14 +422,14 @@ describe('Test tsuko and restrictions', async () => {
         await restrictionFactoryContract.getAddress()
       );
 
-      await (await tsuko.addRestriction(restrictionAddress)).wait();
-      expect((await tsuko.getRestrictions())[0].toLowerCase()).to.be.equal(
+      await (await paymaster.addRestriction(restrictionAddress)).wait();
+      expect((await paymaster.getRestrictions())[0].toLowerCase()).to.be.equal(
         restrictionAddress.toLowerCase()
       );
     });
 
     it('removeRestriction', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
       const restrictionAddress = await createRestriction(
         'UserRestriction',
         RestrictionMethod.USER,
@@ -423,18 +438,18 @@ describe('Test tsuko and restrictions', async () => {
         await restrictionFactoryContract.getAddress()
       );
 
-      await (await tsuko.addRestriction(restrictionAddress)).wait();
-      expect((await tsuko.getRestrictions())[0].toLowerCase()).to.be.equal(
+      await (await paymaster.addRestriction(restrictionAddress)).wait();
+      expect((await paymaster.getRestrictions())[0].toLowerCase()).to.be.equal(
         restrictionAddress.toLowerCase()
       );
 
-      await (await tsuko.removeRestriction(restrictionAddress)).wait();
-      expect(await tsuko.getRestrictions()).to.be.empty;
+      await (await paymaster.removeRestriction(restrictionAddress)).wait();
+      expect(await paymaster.getRestrictions()).to.be.empty;
     });
 
     it('checkTransactionEligibility', async () => {
-      const tsuko = await getTsuko(sponsoredPaymasterAddress, wallet);
-      const tsukoParams: TsukoParams = [
+      const paymaster = await getPaymaster(sponsoredPaymasterAddress, wallet);
+      const PaymasterParams: PaymasterParams = [
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         ['Hello from sponsored paymaster'],
@@ -447,10 +462,10 @@ describe('Test tsuko and restrictions', async () => {
         [],
         await restrictionFactoryContract.getAddress()
       );
-      await (await tsuko.addRestriction(restrictionAddress)).wait();
+      await (await paymaster.addRestriction(restrictionAddress)).wait();
 
-      expect(await tsuko.checkTransactionEligibility(...tsukoParams)).to.be
-        .false;
+      expect(await paymaster.checkTransactionEligibility(...PaymasterParams)).to
+        .be.false;
 
       const userRestriction = UserRestriction__factory.connect(
         restrictionAddress,
@@ -463,30 +478,30 @@ describe('Test tsuko and restrictions', async () => {
         )
       ).wait();
 
-      expect(await tsuko.checkTransactionEligibility(...tsukoParams)).to.be
-        .true;
+      expect(await paymaster.checkTransactionEligibility(...PaymasterParams)).to
+        .be.true;
     });
   });
 
   describe('Benchmarks for allowance - ERC20', () => {
     it('Benchmarks', async () => {
-      const tsuko = await getTsuko(erc20PaymasterAddress, wallet);
+      const paymaster = await getPaymaster(erc20PaymasterAddress, wallet);
 
       const greet = 'Here we go again.';
-      const greetParams: TsukoParams = [
+      const greetParams: PaymasterParams = [
         await greeterContract.getAddress(),
         'function setGreeting(string memory _greeting)',
         [greet],
       ];
 
       const boxValue = 200000000;
-      const boxParams: TsukoParams = [
+      const boxParams: PaymasterParams = [
         await boxContact.getAddress(),
         'function store(uint256 newValue) public',
         [boxValue],
       ];
 
-      const nftParams: TsukoParams = [
+      const nftParams: PaymasterParams = [
         await NFT721Contract.getAddress(),
         'function mintNFT(address _recepient, string memory _tokenURI) public',
         [await wallet.getAddress(), '1'],
@@ -494,13 +509,13 @@ describe('Test tsuko and restrictions', async () => {
 
       const greeterEstimateGas =
         await greeterContract.setGreeting.estimateGas(greet);
-      const tsukoEstimateGasBeforeApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...greetParams)
+      const paymasterEstimateGasBeforeApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...greetParams)
       );
 
       console.log(`Greeter estimate gas: ${greeterEstimateGas}`);
       console.log(
-        `Tsuko estimate gas before approval: ${tsukoEstimateGasBeforeApproval}`
+        `Paymaster estimate gas before approval: ${paymasterEstimateGasBeforeApproval}`
       );
 
       await (
@@ -509,21 +524,21 @@ describe('Test tsuko and restrictions', async () => {
           738313125000000000000n
         )
       ).wait();
-      const tsukoEstimateGasAfterApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...greetParams)
+      const paymasterEstimateGasAfterApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...greetParams)
       );
       console.log(
-        `Tsuko estimate gas after approval: ${tsukoEstimateGasAfterApproval}`
+        `Paymaster estimate gas after approval: ${paymasterEstimateGasAfterApproval}`
       );
 
       console.log(
         `GREETER - Difference before approval: ${
-          BigInt(tsukoEstimateGasBeforeApproval) - greeterEstimateGas
+          BigInt(paymasterEstimateGasBeforeApproval) - greeterEstimateGas
         }`
       );
       console.log(
         `GREETER - Difference after approval: ${
-          BigInt(tsukoEstimateGasAfterApproval) - greeterEstimateGas
+          BigInt(paymasterEstimateGasAfterApproval) - greeterEstimateGas
         }`
       );
 
@@ -531,13 +546,13 @@ describe('Test tsuko and restrictions', async () => {
       await (await erc20Contract.approve(erc20PaymasterAddress, 0n)).wait();
 
       const boxValueEstimateGas = await boxContact.store.estimateGas(boxValue);
-      const tsukoBoxEstimateGasBeforeApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...boxParams)
+      const paymasterBoxEstimateGasBeforeApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...boxParams)
       );
 
       console.log(`Box value estimate gas: ${boxValueEstimateGas}`);
       console.log(
-        `Tsuko box value estimate gas before approval: ${tsukoBoxEstimateGasBeforeApproval}`
+        `Paymaster box value estimate gas before approval: ${paymasterBoxEstimateGasBeforeApproval}`
       );
 
       await (
@@ -546,21 +561,21 @@ describe('Test tsuko and restrictions', async () => {
           738313125000000000000n
         )
       ).wait();
-      const tsukoBoxEstimateGasAfterApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...boxParams)
+      const paymasterBoxEstimateGasAfterApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...boxParams)
       );
       console.log(
-        `Tsuko box value estimate gas after approval: ${tsukoBoxEstimateGasAfterApproval}`
+        `Paymaster box value estimate gas after approval: ${paymasterBoxEstimateGasAfterApproval}`
       );
 
       console.log(
         `BOX - Difference before approval: ${
-          BigInt(tsukoBoxEstimateGasBeforeApproval) - boxValueEstimateGas
+          BigInt(paymasterBoxEstimateGasBeforeApproval) - boxValueEstimateGas
         }`
       );
       console.log(
         `BOX - Difference after approval: ${
-          BigInt(tsukoBoxEstimateGasAfterApproval) - boxValueEstimateGas
+          BigInt(paymasterBoxEstimateGasAfterApproval) - boxValueEstimateGas
         }`
       );
 
@@ -571,8 +586,8 @@ describe('Test tsuko and restrictions', async () => {
         await wallet.getAddress(),
         '1'
       );
-      const nftMintEstimateGasBeforeApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...nftParams)
+      const nftMintEstimateGasBeforeApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...nftParams)
       );
 
       console.log(`NFT mint estimate gas: ${nftMintEstimateGas}`);
@@ -586,8 +601,8 @@ describe('Test tsuko and restrictions', async () => {
           738313125000000000000n
         )
       ).wait();
-      const nftMintEstimateGasAfterApproval = await tsuko.estimateGas(
-        await tsuko.populateTsukoTransaction(...nftParams)
+      const nftMintEstimateGasAfterApproval = await paymaster.estimateGas(
+        await paymaster.populatePaymasterTransaction(...nftParams)
       );
       console.log(
         `NFT mint estimate gas after approval: ${nftMintEstimateGasAfterApproval}`

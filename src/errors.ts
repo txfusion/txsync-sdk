@@ -1,4 +1,4 @@
-export class TsukoError extends Error {
+export class PaymasterError extends Error {
   public readonly errorCode: string;
 
   constructor(message: string, errorCode = 'GENERAL') {
@@ -6,11 +6,11 @@ export class TsukoError extends Error {
     this.errorCode = errorCode;
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, TsukoError.prototype);
+    Object.setPrototypeOf(this, PaymasterError.prototype);
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, TsukoError);
+      Error.captureStackTrace(this, PaymasterError);
     }
 
     this.name = this.constructor.name;

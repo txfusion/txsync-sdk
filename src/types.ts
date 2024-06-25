@@ -22,12 +22,12 @@ export interface PaymasterOptions {
   minimalAllowance?: BigNumberish;
 }
 
-export interface TsukoOverrides
+export interface PaymasterOverrides
   extends Omit<TransactionRequest, 'from' | 'type' | 'gasPrice'> {
   paymasterOptions?: PaymasterOptions;
 }
 
-export type TsukoParams = [Address, InterfaceAbi, any[]?, TsukoOverrides?];
+export type PaymasterParams = [Address, InterfaceAbi, any[]?, PaymasterOverrides?];
 
 export type BaseRestrictionItem = {
   address: string;

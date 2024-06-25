@@ -6,7 +6,7 @@ import {
   SponsoredPaymaster,
   SponsoredPaymaster__factory,
 } from './typechain';
-import {PaymasterOptions, PaymasterType, TsukoOverrides} from './types';
+import {PaymasterOptions, PaymasterType, PaymasterOverrides} from './types';
 import {ERC20_PAYMASTER_GAS_OVERHEAD, GAS_DIFF_FACTOR, formatTransaction, multiplyBigIntWithFLoat, sendRequest} from './utils';
 
 import {
@@ -27,9 +27,9 @@ import {
   Interface,
   InterfaceAbi,
 } from 'ethers';
-import {TsukoError} from './errors';
+import {PaymasterError} from './errors';
 
-class Tsuko {
+class Paymaster {
   readonly address!: Address;
   readonly paymasterType!: PaymasterType;
   readonly runner!: Signer | Wallet;
@@ -50,11 +50,11 @@ class Tsuko {
     this.token = token;
   }
 
-  async populateTsukoTransaction(
+  async populatePaymasterTransaction(
     contractAddress: Address,
     functionToCall: InterfaceAbi,
     args?: any[],
-    overrides?: TsukoOverrides
+    overrides?: PaymasterOverrides
   ) {
     const tx: TransactionRequest = {};
 
@@ -103,20 +103,20 @@ class Tsuko {
     return getPaymasterParams(this.address, paymasterInput);
   }
 
-  async sendTsukoTransaction(
+  async sendPaymasterTransaction(
     contractAddress: Address,
     functionToCall: InterfaceAbi,
     args: any[] = [],
-    overrides?: TsukoOverrides
+    overrides?: PaymasterOverrides
   ) {
-    const tx = await this.populateTsukoTransaction(
+    const tx = await this.populatePaymasterTransaction(
       contractAddress,
       functionToCall,
       args,
       overrides
     );
-    // Moved here from populateTsukoTransaction because we don't want to estimate gas in the case
-    // when transaction will fail and populateTsukoTransaction will throw an error
+    // Moved here from populatePaymasterTransaction because we don't want to estimate gas in the case
+    // when transaction will fail and populatePaymasterTransaction will throw an error
     tx.gasLimit = overrides?.gasLimit ?? (await this.estimateGas(tx));
     // maxFeePerGas and maxPriorityFeePerGas are set after the gas limit is calculated for purpose
     // Because of this estimation for gasLimit is a little bit higher (~ 4k gas) but it's not a big deal and
@@ -187,11 +187,11 @@ class Tsuko {
     contractAddress: Address,
     functionToCall: InterfaceAbi,
     args: any[] = [],
-    overrides?: TsukoOverrides
+    overrides?: PaymasterOverrides
   ): Promise<boolean> {
     let returnVal = true;
 
-    const tx = await this.populateTsukoTransaction(
+    const tx = await this.populatePaymasterTransaction(
       contractAddress,
       functionToCall,
       args,
@@ -220,10 +220,10 @@ class Tsuko {
     contractAddress: Address,
     functionToCall: InterfaceAbi,
     args?: any[],
-    overrides?: TsukoOverrides
+    overrides?: PaymasterOverrides
   ): Promise<BigNumberish> {
     if (this.paymasterType !== PaymasterType.ERC20) {
-      throw new TsukoError(
+      throw new PaymasterError(
         'Minimal allowance is only available for ERC20 paymasters',
         'UNSUPPORTED_PAYMASTER_TYPE'
       );
@@ -232,7 +232,7 @@ class Tsuko {
     const gasLimit =
       overrides?.gasLimit ??
       (await this.estimateGas(
-        await this.populateTsukoTransaction(
+        await this.populatePaymasterTransaction(
           contractAddress,
           functionToCall,
           args,
@@ -251,20 +251,20 @@ class Tsuko {
   }
 }
 
-export async function getTsuko(
+export async function getPaymaster(
   address: Address,
   runner: Signer | Wallet
-): Promise<Tsuko> {
+): Promise<Paymaster> {
   const chainId = await sendRequest(runner, 'eth_chainId');
 
   const paymaster = ERC20Paymaster__factory.connect(address, runner);
   try {
     const token = await paymaster.ERC20Token();
-    return new Tsuko(address, runner, PaymasterType.ERC20, chainId, token);
+    return new Paymaster(address, runner, PaymasterType.ERC20, chainId, token);
   } catch (error: any) {
     if (error.code === 'CALL_EXCEPTION') {
-      return new Tsuko(address, runner, PaymasterType.SPONSORED, chainId);
+      return new Paymaster(address, runner, PaymasterType.SPONSORED, chainId);
     }
-    throw new TsukoError('Failed to get Tsuko instance', 'FAILED_TO_GET_TSUKO');
+    throw new PaymasterError('Failed to get Paymaster instance', 'FAILED_TO_GET_PAYMASTER');
   }
 }

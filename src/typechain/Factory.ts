@@ -24,12 +24,12 @@ import type {
 } from "./common";
 
 export declare namespace Factory {
-  export type TsukoItemStruct = {
+  export type PaymasterItemStruct = {
     method: BigNumberish;
     contractAddress: AddressLike;
   };
 
-  export type TsukoItemStructOutput = [
+  export type PaymasterItemStructOutput = [
     method: bigint,
     contractAddress: string
   ] & { method: bigint; contractAddress: string };
@@ -406,7 +406,7 @@ export interface Factory extends BaseContract {
 
   getDeployedPaymasters: TypedContractMethod<
     [],
-    [Factory.TsukoItemStructOutput[]],
+    [Factory.PaymasterItemStructOutput[]],
     "view"
   >;
 
@@ -506,7 +506,7 @@ export interface Factory extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getDeployedPaymasters"
-  ): TypedContractMethod<[], [Factory.TsukoItemStructOutput[]], "view">;
+  ): TypedContractMethod<[], [Factory.PaymasterItemStructOutput[]], "view">;
   getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<
