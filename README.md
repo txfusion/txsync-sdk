@@ -1,19 +1,34 @@
-# 🚀 txsync-sdk
+# 🚀 @txfusion/txsync-sdk
 
 ## 📌 Overview
 
 `txsync-sdk` abstracts the functionalities of the [txSync](https://txsync.io/) products and makes it easier to integrate in your project.
 
-We currently support [txTsuko](https://app.txsync.io/tsuko), but we're planning to integrate all txSync functionalities.
-Currently, we have two main exported functions:
+We currently support [Tsuko](https://app.txsync.io/tsuko), but we're planning to integrate all txSync functionalities.
+The main power of `txsync-sdk` lies in the paymaster object and its methods.
 
-- `getPaymaster` - which provides a way to get the Paymaster you created and then call methods on it
-- `createRestriction` - which deploys a new restriction contract based on the provided parameters
+- `getPaymaster` - a function which provides a way to get the Paymaster you created and then call methods on it
+- `sendPaymasterTransaction` - method that populates and sends a transaction using the Paymaster and provided parameters
+- `populatePaymasterTransaction` - method that returns the populated TransactionRequest object, giving you the option to perform additional checks or operations on the transaction data
 
 ## 🛠 Prerequisites
 
 - `node: >= 18` ([installation guide](https://nodejs.org/en/download/package-manager))
 - `ethers: ^6.8.0`
+
+## 📥 Installation & Setup
+
+```javascript
+npm install @txfusion/txsync-sdk
+// or
+yarn add @txfusion/txsync-sdk
+```
+
+## 🧑‍🍳 Examples
+
+The complete examples with various use cases are available [here](https://github.com/txfusion/txsync-sdk/blob/main/EXAMPLES.md).
+
+## 📝 SDK API
 
 ## getPaymaster
 
