@@ -340,3 +340,10 @@ export { RestrictionFactory__factory };
 export { SponsoredPaymaster__factory };
 export { UserRestriction__factory };
 ```
+
+## 🤝 Contributing
+
+We welcome contributions from the community! If you're interested in contributing to the `@txfusion/txsync-sdk` JavaScript SDK,
+please take a look at our [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for guidelines and details on the process.
+
+Thank you for making `@txfusion/txsync-sdk` JavaScript SDK better! 🙌
