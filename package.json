@@ -1,6 +1,6 @@
 {
   "name": "@txfusion/txsync-sdk",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "description": "A Web3 library for interacting with the txSync Paymaster as a Service.",
