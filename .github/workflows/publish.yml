@@ -13,9 +13,6 @@ on:
         default: latest
         options:
           - latest
-          - beta
-          - ethers-v5-latest
-          - ethers-v5-beta
 jobs:
   zksync:
     name: Publish package
